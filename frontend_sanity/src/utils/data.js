@@ -56,22 +56,26 @@ export const feedQuery = `*[_type == "pin"] | order(_createdAt desc) {
       url
     }
   },
+  _id,
+  destination,
+  postedBy->{
+    _id,
+    userName,
+    image
+  },
+  // Manejo de 'postedBy' nulo con operador de coalescencia nula
+  postedBy: postedBy ?? {_id: null, userName: "Invitado", image: null},
+  save[]{
+    _key,
+    postedBy->{
       _id,
-      destination,
-      postedBy->{
-        _id,
-        userName,
-        image
-      },
-      save[]{
-        _key,
-        postedBy->{
-          _id,
-          userName,
-          image
-        },
-      },
-    } `;
+      userName,
+      image
+    },
+     // Manejo de 'postedBy' nulo dentro de 'save'
+    postedBy: postedBy ?? {_id: null, userName: "Invitado", image: null},
+  },
+}`;
 
 export const pinDetailQuery = (pinId) => {
   const query = `*[_type == "pin" && _id == '${pinId}']{
@@ -159,6 +163,31 @@ export const searchQuery = (searchTerm) => {
               },
             },
           }`;
+  return query;
+};
+
+export const allPinsQuery = () => {
+  const query = `*[_type == 'pin'] | order(_createdAt desc){
+    image{
+      asset->{
+        url
+      }
+    },
+    _id,
+    destination,
+    postedBy->{
+      _id,
+      userName,
+      image
+    }, 
+    save[]{ 
+      postedBy->{
+        _id,
+        userName,
+        image
+      },
+    },
+  }`;
   return query;
 };
 

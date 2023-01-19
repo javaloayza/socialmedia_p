@@ -4,32 +4,37 @@ import { AiFillCloseCircle } from 'react-icons/ai';
 import { Link, Route, Routes } from 'react-router-dom';
 
 import { Sidebar, UserProfile } from '../components';
-import { userQuery } from '../utils/data';
+import { allPinsQuery, userQuery } from '../utils/data';
 import { client } from '../client';
 import Pins from './Pins';
 import logo from '../assets/logotext_colorshot.png';
+import { UserProvider } from '../components/context/UserContext';
 
 const Home = () => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [
-    user, setUser] = useState();
+  const [pins, setPins] = useState([]);
+  const [user, setUser] = useState();
   const scrollRef = useRef(null);
 
   const userInfo = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
 
   useEffect(() => {
-    const query = userQuery(userInfo?.googleId);
-
-    client.fetch(query).then((data) => {
-      setUser(data[0]);
+    if (userInfo?.googleId) {
+      // Consulta para obtener datos del usuario autenticado
+      const userQueryStr = userQuery(userInfo.googleId);
+      client.fetch(userQueryStr).then((data) => {
+        setUser(data[0]); // Almacena datos del usuario autenticado
+      });
+    } else {
+      setUser(null); // Si no hay usuario autenticado, define un estado vacío
+    }
+    // Consulta para obtener todos los pins (se ejecuta siempre)
+    client.fetch(allPinsQuery()).then((pinsData) => {
+      setPins(pinsData);
+      // console.log('pinsData', pinsData);
     });
   }, []);
-
-  useEffect(() => {
-    scrollRef.current.scrollTo(0, 0);
-  });
-
-  /*  console.log(user); */
+  console.log('userHome', user);
 
   return (
     <div className="flex bg-gray-50 md:flex-row flex-col h-screen transition-height duration-75 ease-out">
@@ -56,10 +61,12 @@ const Home = () => {
         )}
       </div>
       <div className="pb-2 flex-1 h-screen overflow-y-scroll" ref={scrollRef}>
-        <Routes>
-          <Route path="/user-profile/:userId" element={<UserProfile />} />
-          <Route path="/*" element={<Pins user={user && user} />} />
-        </Routes>
+        <UserProvider value={{ user, setUser }}>
+          <Routes>
+            <Route path="/user-profile/:userId" element={<UserProfile />} />
+            <Route path="/*" element={<Pins user={user && user} />} />
+          </Routes>
+        </UserProvider>
       </div>
     </div>
   );

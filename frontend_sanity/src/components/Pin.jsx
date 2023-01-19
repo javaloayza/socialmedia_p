@@ -14,6 +14,7 @@ const Pin = ({ pin }) => {
   const navigate = useNavigate();
 
   const { postedBy, image, _id, destination } = pin;
+  console.log('pin', pin);
   const user = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
 
   const deletePin = (id) => {

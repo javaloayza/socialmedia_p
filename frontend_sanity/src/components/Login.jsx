@@ -2,7 +2,7 @@
 import { React, useEffect } from 'react';
 import GoogleLogin from 'react-google-login';
 import { gapi } from 'gapi-script';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import shareVideo from '../assets/share.mp4';
 import logo from '../assets/sinfondo_logo.png';
@@ -74,6 +74,9 @@ const Login = () => {
               cookiePolicy="single_host_origin"
             />
           </div>
+          <button type="button" className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none">
+            <Link to="/home">test</Link>
+          </button>
         </div>
       </div>
     </div>

@@ -62,12 +62,15 @@ const UserProfile = () => {
               src="https://source.unsplash.com/1600x900/?nature,photography,technology"
               alt="user-bannerPic"
             />
+            {/* {console.log('image', user.image)} */}
+            {user && user.image && (
             <img
               className="rounded-full w-20 h-20 -mt-10 shadow-xl object-contain"
               /* src={user?.image} */
-              src={user?.image}
+              src={user.image}
               alt="user-pic"
             />
+            )}
           </div>
           <h1 className="font-bold text-3xl text-center mt-3">
             {user.userName}
