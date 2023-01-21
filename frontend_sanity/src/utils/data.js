@@ -1,3 +1,5 @@
+// import { GUEST_USER } from './guestUser';
+
 export const categories = [
   {
     name: 'cars',
@@ -56,26 +58,22 @@ export const feedQuery = `*[_type == "pin"] | order(_createdAt desc) {
       url
     }
   },
-  _id,
-  destination,
-  postedBy->{
-    _id,
-    userName,
-    image
-  },
-  // Manejo de 'postedBy' nulo con operador de coalescencia nula
-  postedBy: postedBy ?? {_id: null, userName: "Invitado", image: null},
-  save[]{
-    _key,
-    postedBy->{
       _id,
-      userName,
-      image
-    },
-     // Manejo de 'postedBy' nulo dentro de 'save'
-    postedBy: postedBy ?? {_id: null, userName: "Invitado", image: null},
-  },
-}`;
+      destination,
+      postedBy->{
+        _id,
+        userName,
+        image
+      },
+      save[]{
+        _key,
+        postedBy->{
+          _id,
+          userName,
+          image
+        },
+      },
+    } `;
 
 export const pinDetailQuery = (pinId) => {
   const query = `*[_type == "pin" && _id == '${pinId}']{
@@ -192,8 +190,10 @@ export const allPinsQuery = () => {
 };
 
 export const userQuery = (userId) => {
-  const query = `*[_type == "user" && _id == '${userId}']`;
-  return query;
+  if (userId === 'guest-google-id') {
+    return '*[_type == "user" && _id == \'guest-user-id\']';
+  }
+  return `*[_type == "user" && _id == '${userId}']`;
 };
 
 export const userCreatedPinsQuery = (userId) => {

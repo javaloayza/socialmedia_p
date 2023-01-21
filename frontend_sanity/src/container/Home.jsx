@@ -4,37 +4,43 @@ import { AiFillCloseCircle } from 'react-icons/ai';
 import { Link, Route, Routes } from 'react-router-dom';
 
 import { Sidebar, UserProfile } from '../components';
-import { allPinsQuery, userQuery } from '../utils/data';
+import { userQuery } from '../utils/data';
 import { client } from '../client';
 import Pins from './Pins';
 import logo from '../assets/logotext_colorshot.png';
 import { UserProvider } from '../components/context/UserContext';
+import { GUEST_USER } from '../utils/guestUser';
+import { getUserFromStorage } from '../utils/auth';
 
 const Home = () => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [pins, setPins] = useState([]);
   const [user, setUser] = useState();
   const scrollRef = useRef(null);
 
-  const userInfo = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
+  // const userInfo = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
+
+  const initializeUser = async () => {
+    const userInfo = getUserFromStorage();
+
+    if (userInfo?.googleId) {
+      if (userInfo.googleId === 'guest-google-id') {
+        // Guest user - no need to fetch from Sanity
+        setUser(GUEST_USER);
+      } else {
+        // Regular Google-authenticated user
+        const userQueryStr = userQuery(userInfo.googleId);
+        const data = await client.fetch(userQueryStr);
+        setUser(data[0]);
+      }
+    } else {
+      setUser(null);
+    }
+  };
 
   useEffect(() => {
-    if (userInfo?.googleId) {
-      // Consulta para obtener datos del usuario autenticado
-      const userQueryStr = userQuery(userInfo.googleId);
-      client.fetch(userQueryStr).then((data) => {
-        setUser(data[0]); // Almacena datos del usuario autenticado
-      });
-    } else {
-      setUser(null); // Si no hay usuario autenticado, define un estado vacío
-    }
-    // Consulta para obtener todos los pins (se ejecuta siempre)
-    client.fetch(allPinsQuery()).then((pinsData) => {
-      setPins(pinsData);
-      // console.log('pinsData', pinsData);
-    });
+    initializeUser();
   }, []);
-  console.log('userHome', user);
+  // console.log('userHome', user);
 
   return (
     <div className="flex bg-gray-50 md:flex-row flex-col h-screen transition-height duration-75 ease-out">

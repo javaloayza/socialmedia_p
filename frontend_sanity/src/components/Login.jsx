@@ -8,6 +8,7 @@ import shareVideo from '../assets/share.mp4';
 import logo from '../assets/sinfondo_logo.png';
 
 import { client } from '../client';
+import { handleGuestLogin } from '../utils/auth';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -55,7 +56,6 @@ const Login = () => {
           <div className="p-5">
             <img src={logo} width="200px" />
           </div>
-
           <div className="shadow-2xl">
             <GoogleLogin
               clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
@@ -74,8 +74,14 @@ const Login = () => {
               cookiePolicy="single_host_origin"
             />
           </div>
-          <button type="button" className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none">
-            <Link to="/home">test</Link>
+          <button
+            type="button"
+            onClick={() => {
+              handleGuestLogin();
+            }}
+            className="p-3 bg-gray-200 rounded-lg hover:bg-gray-300"
+          >
+            <Link to="/">Continue as Guest</Link>
           </button>
         </div>
       </div>
