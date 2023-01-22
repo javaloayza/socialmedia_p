@@ -14,5 +14,10 @@ export default {
       title: 'Image',
       type: 'string',
     },
+    {
+      name: 'googleId',
+      title: 'Google ID',
+      type: 'string',
+    }
   ],
 };
