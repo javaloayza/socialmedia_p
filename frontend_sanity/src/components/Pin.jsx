@@ -5,7 +5,9 @@ import { MdDownloadForOffline } from 'react-icons/md';
 import { AiTwotoneDelete } from 'react-icons/ai';
 import { BsFillArrowUpRightCircleFill } from 'react-icons/bs';
 
+import Swal from 'sweetalert2';
 import { client, urlFor } from '../client';
+import { getUserFromStorage } from '../utils/auth';
 
 const Pin = ({ pin }) => {
   const [postHovered, setPostHovered] = useState(false);
@@ -14,8 +16,9 @@ const Pin = ({ pin }) => {
   const navigate = useNavigate();
 
   const { postedBy, image, _id, destination } = pin;
-  console.log('pin', pin);
+  // console.log('pin', pin);
   const user = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
+  const userInfo = getUserFromStorage();
 
   const deletePin = (id) => {
     client
@@ -52,6 +55,23 @@ const Pin = ({ pin }) => {
     }
   };
 
+  const handleSavedPin = (e) => {
+    e.stopPropagation();
+
+    if (userInfo?.googleId === 'guest-google-id') {
+      console.log('ingreso');
+      Swal.fire({
+        title: 'You must sign in',
+        text: 'Please sign in to continue.',
+        icon: 'warning',
+        iconColor: '#ef4444',
+        confirmButtonColor: '#327cff',
+      });
+      return;
+    }
+    savePin(_id);
+  };
+
   return (
     <div className="m-2">
       <div
@@ -85,10 +105,7 @@ const Pin = ({ pin }) => {
                 </button>
               ) : (
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    savePin(_id);
-                  }}
+                  onClick={handleSavedPin}
                   type="button"
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
                 >
@@ -110,18 +127,18 @@ const Pin = ({ pin }) => {
                 </a>
               ) : undefined}
               {
-           postedBy?._id === user?.googleId && (
-           <button
-             type="button"
-             onClick={(e) => {
-               e.stopPropagation();
-               deletePin(_id);
-             }}
-             className="bg-white p-2 rounded-full w-8 h-8 flex items-center justify-center text-dark opacity-75 hover:opacity-100 outline-none"
-           >
-             <AiTwotoneDelete />
-           </button>
-           )
+            postedBy?._id === user?.googleId && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                deletePin(_id);
+              }}
+              className="bg-white p-2 rounded-full w-8 h-8 flex items-center justify-center text-dark opacity-75 hover:opacity-100 outline-none"
+            >
+              <AiTwotoneDelete />
+            </button>
+            )
         }
             </div>
           </div>

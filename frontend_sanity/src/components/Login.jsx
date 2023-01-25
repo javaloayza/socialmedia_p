@@ -9,6 +9,7 @@ import logo from '../assets/sinfondo_logo.png';
 
 import { client } from '../client';
 import { handleGuestLogin } from '../utils/auth';
+import avatar from '../assets/avatar-image.jpg';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -62,11 +63,11 @@ const Login = () => {
               render={(renderProps) => (
                 <button
                   type="button"
-                  className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none"
+                  className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none w-48"
                   onClick={renderProps.onClick}
                   disabled={renderProps.disabled}
                 >
-                  <FcGoogle className="mr-4" /> Sign in with google
+                  <FcGoogle className="mr-4 text-xl" /> Sign in with google
                 </button>
               )}
               onSuccess={responseGoogle}
@@ -79,8 +80,9 @@ const Login = () => {
             onClick={() => {
               handleGuestLogin();
             }}
-            className="p-3 bg-gray-200 rounded-lg hover:bg-gray-300"
+            className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none mt-2 w-48"
           >
+            <img src={avatar} className="mr-3 w-6" />
             <Link to="/">Continue as Guest</Link>
           </button>
         </div>

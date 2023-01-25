@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { MdDownloadForOffline } from 'react-icons/md';
 import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 import { client, urlFor } from '../client';
 import MasonryLayout from './MasonryLayout';
 import { pinDetailMorePinQuery, pinDetailQuery } from '../utils/data';
 import Spinner from './Spinner';
+import { GUEST_USER } from '../utils/guestUser';
 
 const PinDetail = ({ user }) => {
   const { pinId } = useParams();
@@ -36,6 +38,16 @@ const PinDetail = ({ user }) => {
   }, [pinId]);
 
   const addComment = () => {
+    if (user === GUEST_USER) {
+      Swal.fire({
+        title: 'You must sign in',
+        text: 'Please sign in to continue.',
+        icon: 'warning',
+        iconColor: '#ef4444',
+        confirmButtonColor: '#327cff',
+      });
+      return;
+    }
     if (comment) {
       setAddingComment(true);
 
