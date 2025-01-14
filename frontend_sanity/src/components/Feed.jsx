@@ -5,11 +5,13 @@ import { client } from '../client';
 import { feedQuery, searchQuery } from '../utils/data';
 import MasonryLayout from './MasonryLayout';
 import Spinner from './Spinner';
+// import { userContext } from './context/UserContext';
 
 const Feed = () => {
   const [pins, setPins] = useState();
   const [loading, setLoading] = useState(false);
   const { categoryId } = useParams();
+  // const { user } = useContext(userContext);
 
   useEffect(() => {
     if (categoryId) {
@@ -34,6 +36,7 @@ const Feed = () => {
       <Spinner message={`We are adding ${ideaName} ideas to your feed!`} />
     );
   }
+
   return (
     <div>
       {pins && (

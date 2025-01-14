@@ -1,9 +1,24 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoMdAdd, IoMdSearch } from 'react-icons/io';
+import Swal from 'sweetalert2';
+import { GUEST_USER } from '../utils/guestUser';
 
 const Navbar = ({ searchTerm, setSearchTerm, user }) => {
   const navigate = useNavigate();
+
+  const handleClick = (e) => {
+    if (user === GUEST_USER) {
+      e.preventDefault();
+      Swal.fire({
+        title: 'You must sign in',
+        text: 'Please sign in to continue.',
+        icon: 'warning',
+        iconColor: '#ef4444',
+        confirmButtonColor: '#327cff',
+      });
+    }
+  };
 
   if (user) {
     return (
@@ -23,7 +38,7 @@ const Navbar = ({ searchTerm, setSearchTerm, user }) => {
           <Link to={`user-profile/${user?._id}`} className="hidden md:block">
             <img src={user.image} alt="user-pic" className="w-14 h-12 rounded-lg " />
           </Link>
-          <Link to="/create-pin" className="bg-black text-white rounded-lg w-12 h-12 md:w-14 md:h-12 flex justify-center items-center">
+          <Link to="/create-pin" onClick={handleClick} className="bg-black text-white rounded-lg w-12 h-12 md:w-14 md:h-12 flex justify-center items-center">
             <IoMdAdd />
           </Link>
         </div>

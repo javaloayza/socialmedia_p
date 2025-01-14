@@ -2,12 +2,14 @@
 import { React, useEffect } from 'react';
 import GoogleLogin from 'react-google-login';
 import { gapi } from 'gapi-script';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import shareVideo from '../assets/share.mp4';
 import logo from '../assets/sinfondo_logo.png';
 
 import { client } from '../client';
+import { handleGuestLogin } from '../utils/auth';
+import avatar from '../assets/avatar-image.jpg';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -55,18 +57,17 @@ const Login = () => {
           <div className="p-5">
             <img src={logo} width="200px" />
           </div>
-
           <div className="shadow-2xl">
             <GoogleLogin
               clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
               render={(renderProps) => (
                 <button
                   type="button"
-                  className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none"
+                  className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none w-48"
                   onClick={renderProps.onClick}
                   disabled={renderProps.disabled}
                 >
-                  <FcGoogle className="mr-4" /> Sign in with google
+                  <FcGoogle className="mr-4 text-xl" /> Sign in with google
                 </button>
               )}
               onSuccess={responseGoogle}
@@ -74,6 +75,16 @@ const Login = () => {
               cookiePolicy="single_host_origin"
             />
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              handleGuestLogin();
+            }}
+            className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none mt-2 w-48"
+          >
+            <img src={avatar} className="mr-3 w-6" />
+            <Link to="/">Continue as Guest</Link>
+          </button>
         </div>
       </div>
     </div>

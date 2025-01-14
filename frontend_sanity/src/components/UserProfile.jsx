@@ -7,6 +7,8 @@ import { userCreatedPinsQuery, userQuery, userSavedPinsQuery } from '../utils/da
 import { client } from '../client';
 import MasonryLayout from './MasonryLayout';
 import Spinner from './Spinner';
+import { GUEST_USER } from '../utils/guestUser';
+import { getUserFromStorage } from '../utils/auth';
 
 const activeBtnStyles = 'bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none';
 const notActiveBtnStyles = 'bg-primary mr-4 text-black font-bold p-2 rounded-full w-20 outline-none';
@@ -21,14 +23,28 @@ const UserProfile = () => {
 
   const User = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
 
-  useEffect(() => {
-    const query = userQuery(userId);
-    client.fetch(query).then((data) => {
-      setUser(data[0]);
-    });
-  }, [userId]);
+  const initializeUser = async () => {
+    const userInfo = getUserFromStorage();
+
+    if (userInfo?.googleId) {
+      if (userInfo.googleId === 'guest-google-id') {
+        // Guest user - no need to fetch from Sanity
+        setUser(GUEST_USER);
+      } else {
+        // Regular Google-authenticated user
+        const userQueryStr = userQuery(userInfo.googleId);
+        const data = await client.fetch(userQueryStr);
+        setUser(data[0]);
+      }
+    } else {
+      setUser(null);
+    }
+  };
+  // console.log('user', user);
 
   useEffect(() => {
+    initializeUser();
+
     if (text === 'Created') {
       const createdPinsQuery = userCreatedPinsQuery(userId);
 
@@ -59,15 +75,18 @@ const UserProfile = () => {
           <div className="flex flex-col justify-center items-center">
             <img
               className=" w-full h-370 2xl:h-510 shadow-lg object-cover"
-              src="https://source.unsplash.com/1600x900/?nature,photography,technology"
+              // src="https://source.unsplash.com/1600x900/?nature,photography,technology"
+              src="https://i.pinimg.com/1200x/83/a7/a0/83a7a08da3a5b4b63b3d9a60b68f0865.jpg"
               alt="user-bannerPic"
             />
+            {user && user.image && (
             <img
               className="rounded-full w-20 h-20 -mt-10 shadow-xl object-contain"
               /* src={user?.image} */
-              src={user?.image}
+              src={user.image}
               alt="user-pic"
             />
+            )}
           </div>
           <h1 className="font-bold text-3xl text-center mt-3">
             {user.userName}

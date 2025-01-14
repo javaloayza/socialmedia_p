@@ -18,11 +18,12 @@
     "react-masonry-css": "^1.0.16",
     "react-router-dom": "^6.0.2",
     "react-scripts": "4.0.3",
+    "sweetalert2": "^11.15.10",
     "uuid": "^8.3.2",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "craco start --openssl-legacy-provider",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
